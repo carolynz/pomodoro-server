@@ -10,18 +10,32 @@ const io = new Server(server, {
   },
 });
 
+let connectedClients = 0;
+
 app.get("/", (req, res) => {
   res.send("hola :)");
 });
 
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  // console.log("a user connected");
+
+  // Increment the connected client count and notify all clients
+  connectedClients++;
+  io.emit("updateClientCount", connectedClients);
+
   const createdMessage = (msg) => {
     console.log(msg);
     socket.broadcast.emit("newIncomingMessage", msg);
   };
 
   socket.on("createdMessage", createdMessage);
+
+  socket.on("disconnect", () => {
+    // Decrement the connected client count and notify all clients
+    connectedClients--;
+    io.emit("updateClientCount", connectedClients);
+    console.log("a user disconnected");
+  });
 });
 
 server.listen(4000, () => {
