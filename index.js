@@ -17,14 +17,15 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  // console.log("a user connected");
+  console.log("a user connected");
 
   // Increment the connected client count and notify all clients
   connectedClients++;
   io.emit("updateClientCount", connectedClients);
+  console.log("connected clients: ", connectedClients);
 
   const createdMessage = (msg) => {
-    console.log(msg);
+    console.log("message: ", msg);
     socket.broadcast.emit("newIncomingMessage", msg);
   };
 
@@ -35,6 +36,7 @@ io.on("connection", (socket) => {
     connectedClients--;
     io.emit("updateClientCount", connectedClients);
     console.log("a user disconnected");
+    console.log("connected clients: ", connectedClients);
   });
 });
 
